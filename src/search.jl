@@ -1,5 +1,6 @@
 #Functions to find an input point that predicts a desired output
 import ProgressMeter
+using Optim
 
 function search{D}(target::Real, model::GaussianProcess{D})
     moveinfo = Array(Vector{Float64}, length(model))
@@ -66,6 +67,54 @@ function searchgreedy{N}(target, tol, gp::GaussianProcess{N}, startx)
 
         opt_pts[:,i] = minx
         opt_vals[i] = minf
+    end
+    opt_pts, opt_vals
+end
+
+function searchgrad{D}(target, model::GaussianProcess{D}, startx)
+    count = 0
+    function optf(pt)
+        #count += 1
+        mpt, sig2pt = query(pt, model)
+        #if length(grad) > 0
+            #gradient!(grad, pt, model)
+            #grad[:] = 2.0*(mpt - target)*grad
+        #end
+        #println("#$count")
+        #println("  x: $pt")
+        #println("  g: $grad")
+        (mpt - target)^2
+    end
+
+    function optg!(pt::Vector, grad)
+        mpt, sig2pt = query(pt, model)
+        gradient!(grad, pt, model)
+        grad[:] = 2.0*(mpt - target)*grad
+    end
+
+    opt_pts = zeros(D, size(startx,2))
+    opt_vals = zeros(size(startx,2))
+    for i=1:size(startx,2)
+        #optprob = NLopt.Opt(:LD_MMA, D)
+        #NLopt.lower_bounds!(optprob, -1.0*ones(D))
+        #NLopt.upper_bounds!(optprob,  1.0*ones(D))
+        #NLopt.min_objective!(optprob, optf)
+        #NLopt.ftol_abs!(optprob, 1e-8)
+        #NLopt.maxeval!(optprob, 500)
+        try
+            #(minf, minx, ret) = NLopt.optimize(optprob, startx[:,i])
+            res = optimize(optf, optg!, startx[:,i];
+                           method = LBFGS(),
+                           iterations = 100,
+                           )
+            minx = Optim.minimizer(res)
+            minf = Optim.minimum(res)
+            opt_pts[:,i] = minx
+            opt_vals[i] = minf
+        catch ex
+            println("startx: ", startx[:,i])
+            rethrow()
+        end
     end
     opt_pts, opt_vals
 end

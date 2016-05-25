@@ -94,3 +94,24 @@ function condition{N}(x, gp::GaussianProcess{N})
     Kcond = K_x_x - K_x_xt * Kinv * K_xt_x
     mcond, Kcond
 end
+
+function gradient!{N}(grad::Vector, x::Vector, gp::GaussianProcess{N})
+    grad[:] = covgrad(x, gp.K, gp.Xtrn)'*gp.alpha
+    grad
+end
+gradient{N}(x::Vector, gp::GaussianProcess{N}) = gradient!(zeros(N), x, gp)
+
+function checkgrad{N}(x::Vector, gp::GaussianProcess{N}, dx)
+    grad = zeros(N)
+    for i=1:N
+        dv = zeros(N)
+        dv[i] = dx
+        xt = x + dv
+        m1,sig1 = query(x, gp)
+        m2,sig2 = query(xt,gp)
+        @show m1,m2,dx
+        @show (m2-m1)/dx
+        grad[i] = (m2-m1)/dx
+    end
+    grad
+end

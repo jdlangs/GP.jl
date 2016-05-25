@@ -77,6 +77,24 @@ function grad{Nd,N}(cf::SECov{Nd}, ::Type{Val{N}}, X)
     K
 end
 
+"Compute the derivatives of the test point covariance vector w.r.t. the
+prediction variables"
+function covgrad{Nd}(x::Vector, cf::SECov{Nd}, X)
+    @assert length(x) == Nd
+    @assert size(X,1) == Nd
+    Kd = zeros(size(X,2), Nd)
+    D = diagm(1./cf.lambdas)
+    for j=1:Nd
+        ej = zeros(Nd)
+        ej[j] = 1.0
+        for i=1:size(X,2)
+            dx = X[:,i] - x
+            Kd[i,j] = cf.sig_f^2*exp(-0.5*dot(dx,D*dx))*(-2.0*dot(dx,D*ej))
+        end
+    end
+    Kd
+end
+
 #The squared-exponential symmetric covariance function
 type SECovSym{N} <: CovFunc
     sig_f::Float64
