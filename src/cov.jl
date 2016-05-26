@@ -89,7 +89,7 @@ function covgrad{Nd}(x::Vector, cf::SECov{Nd}, X)
         ej[j] = 1.0
         for i=1:size(X,2)
             dx = X[:,i] - x
-            Kd[i,j] = cf.sig_f^2*exp(-0.5*dot(dx,D*dx))*(-2.0*dot(dx,D*ej))
+            Kd[i,j] = cf.sig_f^2*exp(-0.5*dot(dx,D*dx))*dot(dx,D*ej)
         end
     end
     Kd

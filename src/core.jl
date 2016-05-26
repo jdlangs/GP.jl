@@ -109,8 +109,6 @@ function checkgrad{N}(x::Vector, gp::GaussianProcess{N}, dx)
         xt = x + dv
         m1,sig1 = query(x, gp)
         m2,sig2 = query(xt,gp)
-        @show m1,m2,dx
-        @show (m2-m1)/dx
         grad[i] = (m2-m1)/dx
     end
     grad
