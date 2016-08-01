@@ -18,7 +18,7 @@ type GaussianProcess{N}
         new(m, K, sn2, zeros(N,0), zeros(0), zeros(0,0), zeros(0), 0)
     end
 end
-SEGP(K,sn2,Nd) = GaussianProcess{Nd}(ZeroMean(), K, sn2)
+SEGP(K,sn2,Nd) = GaussianProcess{Nd}(ConstantMean(0.0), K, sn2)
 SEGP(K,sn2,X,y) = train!(SEGP(K,sn2,size(X,1)), X, y)
 
 MSEGP(m,K,sn2,Nd) = GaussianProcess{Nd}(m, K, sn2)

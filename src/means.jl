@@ -1,13 +1,15 @@
 #Mean functions
-export ZeroMean, LinearMean, LinearDiffMean
+export ConstantMean, LinearMean, LinearDiffMean
 
 abstract MeanFunc
 
-#------------------
-#Constant zero mean
-#------------------
-immutable ZeroMean <: MeanFunc end
-(::ZeroMean)(x) = 0.0
+#-------------
+#Constant mean
+#-------------
+immutable ConstantMean <: MeanFunc
+    m::Float64
+end
+(cm::ConstantMean)(x) = cm.m
 
 #-----------
 #Linear mean
