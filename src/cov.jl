@@ -1,7 +1,7 @@
 #Covariance functions
 export SECov
 
-abstract CovFunc
+abstract type CovFunc end
 
 #---------------------------------------
 #Squared-exponential covariance function
@@ -11,7 +11,7 @@ abstract CovFunc
 type SECov{N} <: CovFunc
     sig_f::Float64
     lambdas::Vector{Float64}
-    function SECov(sf, l::Vector)
+    function SECov{N}(sf, l::Vector) where N
         @assert isa(N, Integer)
         @assert length(l) == N
         new(sf, l)
@@ -99,7 +99,7 @@ end
 type SECovSym{N} <: CovFunc
     sig_f::Float64
     lambda::Float64
-    function SECovSym(sf, l)
+    function SECovSym{N}(sf, l) where N
         @assert isa(N, Integer)
         new(sf, l)
     end

@@ -1,7 +1,7 @@
 #Mean functions
 export ConstantMean, LinearMean, LinearDiffMean
 
-abstract MeanFunc
+abstract type MeanFunc end
 
 #-------------
 #Constant mean

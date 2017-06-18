@@ -10,7 +10,7 @@ type GPEnsemble{N}
     w_gen::Float64
     w_qry::Float64
     sig_n2::Float64
-    function GPEnsemble(wg,wq,sn2)
+    function GPEnsemble{N}(wg,wq,sn2) where N
         new(GaussianProcess{N}[], Vector{Float64}[], wg, wq, sn2)
     end
 end

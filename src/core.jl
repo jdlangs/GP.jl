@@ -14,7 +14,7 @@ type GaussianProcess{N}
     #For debug printing
     printlevel::Int
 
-    function GaussianProcess(m, K, sn2)
+    function GaussianProcess{N}(m, K, sn2) where N
         new(m, K, sn2, zeros(N,0), zeros(0), zeros(0,0), zeros(0), 0)
     end
 end
